@@ -184,6 +184,7 @@ import { RouterOutlet } from '@angular/router';
       align-items: center;
       padding: 2rem;
       overflow-y: auto;
+      position: relative;
     }
 
     .project-tag {

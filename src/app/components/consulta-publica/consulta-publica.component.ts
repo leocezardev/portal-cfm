@@ -134,7 +134,6 @@ import { RegistroMedico } from '../../models/registro-medico.model';
       display: flex;
       flex-direction: column;
       gap: 2rem;
-      position: relative;
     }
 
     /* Cabeçalho */
@@ -167,8 +166,8 @@ import { RegistroMedico } from '../../models/registro-medico.model';
 
     .admin-access-header {
       position: absolute;
-      top: 1rem;
-      right: 1.5rem;
+      top: 2rem;
+      right: 2rem;
       z-index: 10;
     }
 
