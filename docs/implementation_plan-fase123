@@ -1,0 +1,77 @@
+# Sistema de Consulta de Registro Médico - Plano de Implementação
+
+Implementação da API REST para a entidade RegistroMedico no Spring Boot (Fase 1), configuração do serviço de integração HTTP em Angular (Fase 2) e criação da interface pública com visual minimalista premium, glassmorphism escuro e acentos em tom de madeira no Angular (Fase 3).
+
+## User Review Required
+
+> [!WARNING]
+> Para evitar problemas de CORS ao integrar a aplicação Angular (`http://localhost:4200`) com a API Spring Boot (`http://localhost:8080`), adicionaremos a anotação `@CrossOrigin(origins = "http://localhost:4200")` diretamente no controlador ou uma política global.
+
+> [!NOTE]
+> Como o banco de dados H2 configurado em `application.properties` é em memória (`jdbc:h2:mem:cfmdb`), criaremos um script `import.sql` para popular dados iniciais automaticamente ao subir a aplicação, permitindo a validação da busca de registros pelo CRM.
+
+## Proposed Changes
+
+---
+
+### Backend (Spring Boot)
+
+#### [MODIFY] [RegistroMedico.java](file:///c:/Users/Cezar/Desktop/validador-situacao-cadastral/src/main/java/com/example/demo/model/RegistroMedico.java)
+- Gerar construtores (padrão e com todos os argumentos), Getters e Setters para todos os atributos da entidade.
+
+#### [NEW] [RegistroMedicoRepository.java](file:///c:/Users/Cezar/Desktop/validador-situacao-cadastral/src/main/java/com/example/demo/repository/RegistroMedicoRepository.java)
+- Criar a interface que estende `JpaRepository<RegistroMedico, Long>`.
+- Declarar o método `Optional<RegistroMedico> findByNumeroCrm(String numeroCrm)`.
+
+#### [NEW] [RegistroMedicoService.java](file:///c:/Users/Cezar/Desktop/validador-situacao-cadastral/src/main/java/com/example/demo/service/RegistroMedicoService.java)
+- Criar classe de serviço anotada com `@Service`.
+- Injetar `RegistroMedicoRepository`.
+- Implementar o método `consultarPorCrm(String crm)` que busca o registro pelo CRM ou lança `ResponseStatusException(HttpStatus.NOT_FOUND, "Registro médico não encontrado")`.
+
+#### [NEW] [RegistroMedicoController.java](file:///c:/Users/Cezar/Desktop/validador-situacao-cadastral/src/main/java/com/example/demo/controller/RegistroMedicoController.java)
+- Criar o controlador REST mapeado para `/api/medicos`.
+- Adicionar endpoint GET `/consulta/{crm}` chamando `RegistroMedicoService.consultarPorCrm(crm)`.
+- Adicionar anotação `@CrossOrigin(origins = "http://localhost:4200")` para permitir requisições do frontend.
+
+#### [NEW] [import.sql](file:///c:/Users/Cezar/Desktop/validador-situacao-cadastral/src/main/resources/import.sql)
+- Inserir registros de teste na tabela `registros_medicos` para permitir validações manuais de consulta.
+
+---
+
+### Frontend (Angular)
+
+#### [MODIFY] [app.config.ts](file:///c:/Users/Cezar/Desktop/validador-situacao-cadastral/portal-cfm/src/app/app.config.ts)
+- Importar e declarar `provideHttpClient()` no array de providers.
+
+#### [NEW] [registro-medico.model.ts](file:///c:/Users/Cezar/Desktop/validador-situacao-cadastral/portal-cfm/src/app/models/registro-medico.model.ts)
+- Definir interface `RegistroMedico` com propriedades: `id`, `nome`, `numeroCrm`, `uf`, `especialidade`, `status`.
+
+#### [NEW] [consulta.service.ts](file:///c:/Users/Cezar/Desktop/validador-situacao-cadastral/portal-cfm/src/app/services/consulta.service.ts)
+- Criar serviço com `@Injectable({ providedIn: 'root' })`.
+- Injetar `HttpClient` e criar método `consultarCrm(crm: string): Observable<RegistroMedico>`.
+
+#### [NEW] [consulta-publica.component.ts](file:///c:/Users/Cezar/Desktop/validador-situacao-cadastral/portal-cfm/src/app/components/consulta-publica/consulta-publica.component.ts)
+- Componente standalone contendo lógica de busca, controle de estados (`carregando`, `sucesso`, `erro`).
+- Implementar template e estilos CSS aplicando visual minimalista moderno.
+- Fundo dark (tons concreto `#121212` / `#1e1e1e`), efeito glassmorphism sombrio para inputs/cards (`backdrop-filter: blur()`), bordas em tom de aço escovado (gradientes cinza-metálico) e acentos elegantes imitando madeira escura quente (`#5c3d2e` / `#3d251e`).
+
+#### [MODIFY] [app.routes.ts](file:///c:/Users/Cezar/Desktop/validador-situacao-cadastral/portal-cfm/src/app/app.routes.ts)
+- Configurar a rota principal `/` para direcionar ao `ConsultaPublicaComponent`.
+
+#### [MODIFY] [app.ts](file:///c:/Users/Cezar/Desktop/validador-situacao-cadastral/portal-cfm/src/app/app.ts)
+- Limpar template inicial e deixar apenas `<router-outlet />` envolvido em uma estrutura básica global com estilo de fundo unificado.
+
+## Verification Plan
+
+### Automated Tests
+- Compilar o projeto backend com `mvn clean compile`.
+- Executar testes unitários (caso existam) com `mvn test`.
+- Compilar o frontend com `pnpm build` ou `npm run build` na pasta `portal-cfm`.
+
+### Manual Verification
+- Subir a API Spring Boot (corrigindo localmente problemas de `JAVA_HOME` ou executando via CLI com o Java do ambiente).
+- Subir a aplicação Angular com `npm run start` (ou `pnpm start`).
+- Acessar a aplicação no navegador e testar a busca de CRM:
+  - Inserir um CRM válido existente no `import.sql` -> deve exibir dados formatados em card glassmorphism.
+  - Inserir um CRM inválido -> deve exibir mensagem de erro de médico não encontrado.
+  - Verificar estados de carregamento (loading spinner / esqueleto).

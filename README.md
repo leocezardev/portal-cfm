@@ -1,59 +1,84 @@
-# PortalCfm
+# Sistema de Validação Cadastral - Conselho Federal de Medicina (CFM)
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.2.16.
+Plataforma full-stack desenvolvida como avaliação técnica para demonstrar a orquestração de APIs REST protegidas, integração com bancos de dados relacionais e controle de estado em Single Page Applications (SPA).
 
-## Development server
+## 🚀 Arquitetura e Tecnologias
 
-To start a local development server, run:
+### Backend (API REST)
+* **Java 21 & Spring Boot 3:** Infraestrutura principal da aplicação.
+* **Spring Data JPA & Hibernate:** Mapeamento objeto-relacional (ORM) e persistência de dados.
+* **Spring Security & JJWT:** Controle de acesso baseado em roles, autenticação Stateless via JSON Web Tokens (JWT) e encriptação BCrypt.
+* **PostgreSQL (Supabase) / H2:** Banco de dados de produção e banco em memória para ambiente de desenvolvimento.
+* **Springdoc OpenAPI (Swagger):** Documentação viva e interativa dos endpoints.
 
-```bash
-ng serve
-```
+### Frontend (Portal)
+* **Angular 17+:** Interface construída com Standalone Components.
+* **RxJS & Signals:** Gerenciamento de estado reativo e detecção de mudanças (Change Detection).
+* **HTTP Interceptors:** Injeção automática de tokens JWT em rotas protegidas.
+* **Design System Customizado:** Implementação de layout de alta performance utilizando tipografia limpa, dark mode e efeitos de glassmorphism.
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+## ⚙️ Funcionalidades Implementadas
+- [x] **Consulta Pública:** Motor de busca instantâneo de registros pelo número do CRM, sem necessidade de autenticação (Acesso Cidadão).
+- [x] **Painel de Fiscalização:** Acesso restrito para funcionários via login (`/login`).
+- [x] **Operações CRUD:** Listagem, inserção e exclusão lógica de médicos, com atualização de estado reativo na tabela em tempo real.
+- [x] **Data Seeding:** Injeção automatizada de dados iniciais e administrador padrão (`admin` / `admin123`) ao detectar banco vazio.
 
-## Code scaffolding
+## 🛠️ Como Executar Localmente
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+### Pré-requisitos
+- JDK 21
+- Node.js (v20+)
+- Maven
 
-```bash
-ng generate component component-name
-```
+### Passos
+1. **Backend:**
+   ```bash
+   ./mvnw spring-boot:run
+   ```
+   A API rodará na porta 8080. O Swagger estará disponível em: http://localhost:8080/swagger-ui.html.
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+2. **Frontend:**
+   Em um novo terminal:
+   ```bash
+   cd portal-cfm
+   npm install
+   ng serve
+   ```
+   O portal estará disponível em: http://localhost:4200.
 
-```bash
-ng generate --help
-```
+## 📷 Demonstração Visual e Telas do Sistema
 
-## Building
+### 1. Consulta Pública (Acesso Cidadão)
+Interface de busca rápida e intuitiva baseada no CRM do médico para validação de sua situação cadastral:
 
-To build the project run:
+![Consulta Pública](docs/TELA1.png)
 
-```bash
-ng build
-```
+### 2. Resultado da Consulta
+Card detalhado apresentando as informações do médico pesquisado e seu status legal perante o conselho:
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+![Resultado da Consulta](docs/TELA2.png)
 
-## Running unit tests
+### 3. Painel de Login Administrativo
+Autenticação segura via JWT para acesso ao painel de controle restrito:
 
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
+![Login Administrativo](docs/tela3.png)
 
-```bash
-ng test
-```
+### 4. Painel de Controle (Gerenciamento de Médicos)
+Dashboard administrativo completo com a listagem de registros médicos ativos, inativos e cassados:
 
-## Running end-to-end tests
+![Painel Administrativo](docs/tela4.png)
 
-For end-to-end (e2e) testing, run:
+### 5. Cadastro de Médico
+Formulário dinâmico com validação para inserção de novos profissionais médicos no sistema:
 
-```bash
-ng e2e
-```
+![Cadastro de Médico](docs/tela5.png)
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+### 6. Operações de Exclusão Lógica e Alteração de Status
+Feedback visual imediato e reativo ao inativar/atualizar um registro cadastral:
 
-## Additional Resources
+![Operações no Painel](docs/tela6.png)
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+### 7. Documentação Interativa da API (Swagger)
+Exposição de todos os endpoints RESTful públicos e protegidos com suporte a testes em tempo real:
+
+![Documentação Swagger](docs/tela7.jfif)
