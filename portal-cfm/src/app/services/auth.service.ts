@@ -2,19 +2,18 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  private readonly authUrl = `${environment.apiUrl}/api/auth/login`;
+  private apiUrl = 'https://portal-cfm.onrender.com/api';
   private readonly TOKEN_KEY = 'jwt_token';
 
   constructor(private http: HttpClient) {}
 
   login(login: string, senha: string): Observable<{ token: string }> {
-    return this.http.post<{ token: string }>(this.authUrl, { login, senha })
+    return this.http.post<{ token: string }>(`${this.apiUrl}/auth/login`, { login, senha })
       .pipe(
         tap(response => {
           this.saveToken(response.token);
